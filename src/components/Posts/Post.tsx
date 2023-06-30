@@ -61,8 +61,9 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
   const [commentsPost, setCommentsPost] = useState([])
   const [likes, setLikes] = useState([])
   const [hasLiked, setHasLiked] = useState(false)
-  const { data: session } = useSession()
+  const { data: session }: any = useSession()
 
+  // types session
   const sessionId = session?.user?.uid
 
   useEffect(() => {
