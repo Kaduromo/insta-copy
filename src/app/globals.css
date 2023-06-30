@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: rgba(238, 238, 238, 0.2);
+}
+
+@layer components {
+  .hover-125 {
+    @apply hover:scale-125 transition-transform duration-200 ease-out;
+  }
+  .hover-110 {
+    @apply hover:scale-110 transition-transform duration-200 ease-out;
+  }
+  .btn {
+    @apply h-7 hover:scale-125 transition-transform duration-200 ease-out cursor-pointer;
+  }
+}
