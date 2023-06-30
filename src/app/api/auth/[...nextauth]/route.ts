@@ -8,7 +8,6 @@ const authOptions = {
       clientSecret: <string>process.env.NEXT_GOOGLE_CLIENT_SECRET,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signin",
   },
