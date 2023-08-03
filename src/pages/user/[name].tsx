@@ -56,7 +56,7 @@ const UserName = ({ userName }: { userName: string }) => {
   return <div>Loading...</div>
 }
 
-export default name
+export default UserName
 
 export async function getServerSideProps({ params }: any) {
   return { props: { userName: params.name } }
