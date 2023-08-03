@@ -1,5 +1,5 @@
-import { useSession } from "next-auth/react"
 import Story from "./Story"
+import { useAuth } from "@/providers/useAuth"
 
 const initialUsers = [
   { _id: 1, username: "Анатолий", img: "https://i.pravatar.cc/150?img=1" },
@@ -26,13 +26,13 @@ const initialUsers = [
 
 const Stories = () => {
   const users = initialUsers
-  const { data: session } = useSession()
+  const { currentUser } = useAuth()
   return (
     <ul className="flex space-x-2 p-3 md:p-6 bg-white mt-6 mx-4 xl:mx-0 border border-gray-200 overflow-x-scroll rounded-md scrollbar-none">
-      {session && (
+      {currentUser && (
         <Story
-          name={session.user?.name || ""}
-          img={session.user?.image || ""}
+          name={currentUser?.name || ""}
+          img={currentUser?.image || ""}
           isUser={true}
         />
       )}

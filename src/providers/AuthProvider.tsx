@@ -1,3 +1,5 @@
+"use client"
+
 import { FC, createContext, useEffect, useMemo, useState } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { IPostUser } from "@/types/types"

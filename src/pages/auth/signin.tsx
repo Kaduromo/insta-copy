@@ -1,9 +1,8 @@
 import "@/app/globals.css"
-import Image from "next/image"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { db } from "@/app/firebase"
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore"
+import { db } from "@/app/firebase"
 
 const SignIn = () => {
   const router = useRouter()
@@ -40,16 +39,14 @@ const SignIn = () => {
 
   return (
     <div className="flex justify-center space-x-7 mt-20">
-      <Image
-        fill={true}
+      <img
         className="hidden rotate-6 md:inline-flex md:w-48"
         src="https://assets.website-files.com/612d05fbe157d13308a9a349/616809e188f0af2d37d0898d_insta2.png"
         alt="Insta - Image"
       />
       <div className="">
         <div className="flex flex-col items-center">
-          <Image
-            fill={true}
+          <img
             className="w-32"
             src="https://mobile-review.com/all/wp-content/uploads/2021/07/instagram-logo.png"
             alt="Insta - Image"
