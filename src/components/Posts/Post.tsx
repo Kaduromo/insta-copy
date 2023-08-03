@@ -1,4 +1,8 @@
-import { db } from "@/app/firebase"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import Moment from "react-moment"
+import "moment/locale/ru"
+import { useAuth } from "@/providers/useAuth"
 import {
   EllipsisHorizontalIcon,
   HeartIcon,
@@ -18,53 +22,18 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore"
-import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
-import Moment from "react-moment"
-import "moment/locale/ru"
-
-interface IPost {
-  id: string
-  name: string
-  userImg: string
-  image: string
-  caption: string
-}
-
-interface ICommentPost {
-  id: string
-  data: () => {
-    comment: string
-    userImage: string
-    username: string
-    timestamp: {
-      seconds: number
-      nanoseconds: number
-      toDate: () => string
-    }
-  }
-}
-
-interface ISession {
-  expires: string
-  user: {
-    email: string
-    image: string
-    name: string
-    uid: string
-    username: string
-  }
-}
+import { db } from "@/app/firebase"
+import { ICommentPost, IPost } from "@/types/types"
 
 const Post = ({ id, name, userImg, image, caption }: IPost) => {
   const [comment, setComment] = useState("")
   const [commentsPost, setCommentsPost] = useState([])
   const [likes, setLikes] = useState([])
   const [hasLiked, setHasLiked] = useState(false)
-  const { data: session }: any = useSession()
 
-  // types session
-  const sessionId = session?.user?.uid
+  const { currentUser, setCurrentUser, users } = useAuth()
+
+  const userId = currentUser?.uid
 
   useEffect(() => {
     onSnapshot(
@@ -74,7 +43,7 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
       ),
       (snapshot: any) => setCommentsPost(snapshot.docs)
     )
-  }, [db, id])
+  }, [id])
 
   const sendComment = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -82,8 +51,8 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
 
     await addDoc(collection(db, "posts", id, "comments"), {
       comment,
-      username: session?.user?.name,
-      userImage: session?.user?.image,
+      username: currentUser?.name,
+      userImage: currentUser?.image,
       timestamp: serverTimestamp(),
     })
   }
@@ -97,38 +66,41 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
     onSnapshot(query(collection(db, "posts", id, "likes")), (snapshot: any) =>
       setLikes(snapshot.docs)
     )
-  }, [])
+  }, [id])
 
   useEffect(() => {
     setHasLiked(
-      likes.findIndex((like: { id: string }) => like.id === sessionId) !== -1
+      likes.findIndex((like: { id: string }) => like.id === userId) !== -1
     )
-  }, [likes])
+  }, [likes,userId])
 
   const likePost = async () => {
     hasLiked
-      ? await deleteDoc(doc(db, "posts", id, "likes", sessionId))
-      : await setDoc(doc(db, "posts", id, "likes", sessionId), {
-          username: session?.user?.name,
+      ? await deleteDoc(doc(db, "posts", id, "likes", userId))
+      : await setDoc(doc(db, "posts", id, "likes", userId), {
+          username: currentUser?.name,
         })
   }
 
   return (
-    <div className="bg-white border rounded-md my-7">
-      <div className="flex items-center p-5">
-        <img
-          className="h-12 rounded-full object-cover border p-1 mr-3"
-          src={userImg}
-          alt={name}
-        />
-        <p className="font-bold flex-1">{name}</p>
+    <li className="bg-white border rounded-md mx-4 my-6 xl:mx-0 md:my-7 shadow-md shadow-slate-500/50">
+      <div className="flex items-center justify-between p-1">
+        <Link
+          href={`/user/${name.replace(/\s+/g, "_").toLowerCase()}`}
+          className="font-bold inline-flex items-center p-1"
+        >
+          <img
+            className="w-10 h-10 rounded-full border p-1 mr-3"
+            src={userImg}
+            alt={name}
+          />
+          {name}
+        </Link>
         <EllipsisHorizontalIcon className="h-7" />
       </div>
-      <div>
-        <img className="object-cover w-full" src={image} alt={caption} />
-      </div>
-      {session && (
-        <div className="flex items-center justify-between px-4 pt-4">
+      <img className="block" src={image} alt={caption} />
+      {currentUser && (
+        <div className="flex items-center justify-between px-3 pt-2">
           <div className="flex space-x-4">
             {hasLiked ? (
               <HeartIconFilled
@@ -143,7 +115,7 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
           <BookmarkIcon className="btn" />
         </div>
       )}
-      <div className="p-5 truncate">
+      <div className="p-3 truncate">
         {likes.length > 0 && (
           <p className="font-bold mb-1">Нравится {likes.length}</p>
         )}
@@ -152,15 +124,35 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
       </div>
       {commentsPost.length > 0 && (
         <>
-          <div className="mx-10 max-h-24 overflow-y-scroll scrollbar-none">
+          {/* <div className="mx-5 max-h-28 overflow-y-scroll scrollbar-none"> */}
+          <div className="mx-5 max-h-28 overflow-y-scroll scroll-bar">
             {commentsPost.map((c: ICommentPost) => (
-              <div key={c.id} className="flex items-center space-x-2 mb-2">
-                <img
-                  className="h-7 rounded-full object-cover"
-                  src={c.data().userImage}
-                  alt={`Image ${c.data().username}`}
-                />
-                <p className="font-semibold">{c.data().username}</p>
+              <div
+                key={c.id}
+                className="flex flex-col md:flex-row md:items-center space-x-2 mb-2"
+              >
+                <Link
+                  href={`/user/${c
+                    .data()
+                    .username.replace(/\s+/g, "_")
+                    .toLowerCase()}`}
+                  className="shrink-0"
+                >
+                  <img
+                    className="w-7 h-7 rounded-full"
+                    src={c.data().userImage}
+                    alt={`Image ${c.data().username}`}
+                  />
+                </Link>
+                <Link
+                  href={`/user/${c
+                    .data()
+                    .username.replace(/\s+/g, "_")
+                    .toLowerCase()}`}
+                  className="font-semibold"
+                >
+                  {c.data().username}
+                </Link>
                 <p className="flex-1 truncate">{c.data().comment}</p>
                 <Moment fromNow>{c.data().timestamp?.toDate()}</Moment>
               </div>
@@ -168,8 +160,13 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
           </div>
         </>
       )}
-      {session && (
-        <form className="flex gap-2 items-center p-4">
+      {currentUser && (
+        <form
+          className="flex gap-2 items-center p-4"
+          onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) =>
+            e.preventDefault()
+          }
+        >
           <FaceSmileIcon className="h-7" />
           <input
             className="border-none flex-1 focus:ring-0"
@@ -178,17 +175,18 @@ const Post = ({ id, name, userImg, image, caption }: IPost) => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
-          <button
-            type="submit"
-            disabled={!comment.trim()}
-            className="text-blue-400 font-bold disabled:text-blue-200"
-            onClick={sendComment}
-          >
-            Отправить
-          </button>
+          {comment.trim() && (
+            <button
+              type="submit"
+              className="text-blue-400 font-bold disabled:text-blue-200"
+              onClick={sendComment}
+            >
+              Отправить
+            </button>
+          )}
         </form>
       )}
-    </div>
+    </li>
   )
 }
 

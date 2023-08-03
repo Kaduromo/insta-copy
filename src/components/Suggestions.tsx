@@ -34,29 +34,35 @@ const initialUsers = [
 const Suggestions = () => {
   const suggestions = initialUsers
   return (
-    <div className="mt-4">
-      <div className="flex items-center justify-between mb-5 text-sm">
+    <div className="mt-3">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-3 text-sm">
         <h3 className="font-bold text-gray-400">Рекомендации для вас</h3>
-        <button className="text-gray-600 font-semibold">Все</button>
+        <button className="text-gray-600 font-semibold text-left mt-2 xl:mt-0">
+          Все
+        </button>
       </div>
       {suggestions &&
         suggestions.map((suggestion) => (
           <div
             key={suggestion._id}
-            className="flex items-center justify-between mt-3"
+            className="flex flex-col xl:flex-row xl:items-center justify-between mt-2"
           >
-            <img
-              className="h-10 rounded-full border p-[2px]"
-              src={suggestion.img}
-              alt={suggestion.username}
-            />
-            <div className="flex-1 ml-3">
-              <h2 className="font-semibold text-sm">{suggestion.username}</h2>
-              <h3 className="font-sm text-gray-400 truncate w-[230px]">
-                {suggestion.job}
-              </h3>
+            <div className="inline-flex items-center">
+              <img
+                className="w-10 h-10 rounded-full border p-[2px]"
+                src={suggestion.img}
+                alt={suggestion.username}
+              />
+              <div className="flex-1 ml-3">
+                <h2 className="font-semibold text-sm">{suggestion.username}</h2>
+                <h3 className="font-sm text-gray-400 truncate w-[230px]">
+                  {suggestion.job}
+                </h3>
+              </div>
             </div>
-            <button className="font-semibold text-blue-400 text-sm">Подписаться</button>
+            <button className="font-semibold text-blue-400 text-sm text-left">
+              Подписаться
+            </button>
           </div>
         ))}
     </div>

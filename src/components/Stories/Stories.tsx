@@ -28,7 +28,7 @@ const Stories = () => {
   const users = initialUsers
   const { data: session } = useSession()
   return (
-    <ul className="flex space-x-2 p-6 bg-white mt-8 border border-gray-200 overflow-x-scroll rounded-sm scrollbar-none">
+    <ul className="flex space-x-2 p-3 md:p-6 bg-white mt-6 mx-4 xl:mx-0 border border-gray-200 overflow-x-scroll rounded-md scrollbar-none">
       {session && (
         <Story
           name={session.user?.name || ""}

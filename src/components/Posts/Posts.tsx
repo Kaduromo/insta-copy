@@ -2,20 +2,7 @@ import { useEffect, useState } from "react"
 import Post from "./Post"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 import { db } from "@/app/firebase"
-
-interface IPost {
-  id: string
-  data: () => {
-    caption: string
-    image: string
-    profileImg: string
-    username: string
-    timestamp: {
-      seconds: number
-      nanoseconds: number
-    }
-  }
-}
+import { IPostUser } from "@/types/types"
 
 const Posts = () => {
   const [posts, setPosts] = useState([])
@@ -25,12 +12,12 @@ const Posts = () => {
       query(collection(db, "posts"), orderBy("timestamp", "desc")),
       (snapshot: any) => setPosts(snapshot.docs)
     )
-  }, [db])
+  }, [])
 
   return (
-    <div>
+    <ul>
       {posts &&
-        posts.map((post: IPost) => (
+        posts.map((post: IPostUser) => (
           <Post
             key={post.id}
             id={post.id}
@@ -40,7 +27,7 @@ const Posts = () => {
             caption={post.data().caption}
           />
         ))}
-    </div>
+    </ul>
   )
 }
 

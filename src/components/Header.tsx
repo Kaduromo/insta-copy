@@ -1,36 +1,39 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline"
 import { HomeIcon } from "@heroicons/react/24/solid"
-import { useSession, signIn, signOut } from "next-auth/react"
 import { Popup } from "reactjs-popup"
 import UploadImagePopup from "./UploadImagePopup"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/providers/useAuth"
 
 const Header = () => {
-  const { data: session } = useSession()
-  // console.log(session)
+  const router = useRouter()
+  const { currentUser, setCurrentUser, users } = useAuth()
 
   return (
-    <header className="shadow-sm border-b sticky top-0 bg-white z-30">
-      <div className="flex items-center justify-between max-w-6xl mx-auto">
+    <header className="border-b sticky top-0 bg-white z-30 shadow-md shadow-slate-600/50">
+      <div className="flex items-center justify-between max-w-6xl mx-auto p-2 lg:p-0 lg:px-2">
         <Link
           href="/"
           className="cursor-pointer w-24 h-24 relative hidden lg:inline-grid"
         >
           <Image
-            className="object-contain"
             fill={true}
             priority={true}
             src="/image/instagram-logo.svg"
             alt="Instagram Logo"
           />
         </Link>
-        <Link href="/" className="cursor-pointer w-14 h-10 relative lg:hidden">
+        <Link
+          href="/"
+          className="cursor-pointer w-14 h-10 shrink-0 relative lg:hidden"
+        >
           <Image
             className="object-contain"
             fill={true}
@@ -49,31 +52,37 @@ const Header = () => {
         <div className="flex items-center gap-3 relative">
           <Link
             href="/"
-            className="hidden md:inline-flex h-6 cursor-pointer hover-125"
+            className="hidden md:inline-flex w-6 h-6 cursor-pointer hover-125"
           >
             <HomeIcon />
           </Link>
-          {session ? (
+          {currentUser ? (
             <>
               <Popup
                 position={"center center"}
                 modal
                 // lockScroll
                 trigger={() => (
-                  <PlusCircleIcon className="h-6 cursor-pointer hover-125" />
+                  <PlusCircleIcon className="w-6 h-6 shrink-0 cursor-pointer hover-125" />
                 )}
               >
                 <UploadImagePopup />
               </Popup>
-              <img
-                className="w-10 h-10 rounded-full cursor-pointer"
-                src={session.user?.image || ""}
-                alt={session.user?.name || ""}
-                onClick={() => signOut()}
-              />
+              <Link
+                href={`/user/${currentUser?.name
+                  ?.replace(/\s+/g, "_")
+                  .toLowerCase()}`}
+                className="shrink-0"
+              >
+                <img
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                  src={currentUser?.image || ""}
+                  alt={currentUser?.name || ""}
+                />
+              </Link>
             </>
           ) : (
-            <button onClick={() => signIn()}>Войти</button>
+            <button onClick={() => router.push("/auth/signin")}>Войти</button>
           )}
         </div>
       </div>

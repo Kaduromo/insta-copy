@@ -1,5 +1,7 @@
 "use client"
 
+import { useRef, useState } from "react"
+import { useAuth } from "@/providers/useAuth"
 import { db, storage } from "@/app/firebase"
 import { CameraIcon } from "@heroicons/react/24/outline"
 import {
@@ -10,15 +12,14 @@ import {
   updateDoc,
 } from "firebase/firestore"
 import { getDownloadURL, ref, uploadString } from "firebase/storage"
-import { useSession } from "next-auth/react"
-import { useRef, useState } from "react"
 
 const UploadImagePopup = () => {
   const [selectedFile, setSelectedFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [caption, setCaption] = useState("")
   const filePickerRef = useRef<HTMLInputElement>(null)
-  const { data: session } = useSession()
+
+  const { currentUser } = useAuth()
 
   const onButtonClick = () => {
     if (filePickerRef && filePickerRef.current) {
@@ -44,8 +45,8 @@ const UploadImagePopup = () => {
 
     const docRef = await addDoc(collection(db, "posts"), {
       caption,
-      username: session?.user?.name,
-      profileImg: session?.user?.image,
+      username: currentUser?.name,
+      profileImg: currentUser?.image,
       timestamp: serverTimestamp(),
     })
 
@@ -74,7 +75,7 @@ const UploadImagePopup = () => {
             onClick={() => setSelectedFile(null)}
             src={selectedFile}
             alt={caption || "image"}
-            className="w-full max-h-[250px] object-cover cursor-pointer"
+            className="w-full max-h-[250px] cursor-pointer"
           />
         ) : (
           <CameraIcon

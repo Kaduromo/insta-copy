@@ -1,5 +1,5 @@
 import "./globals.css"
-import Provider from "./AuthProvider"
+import AuthProvider from "./AuthProvider"
 // import { Inter } from "next/font/google"
 
 // const inter = Inter({ subsets: ["latin"] })
@@ -11,12 +11,12 @@ export const metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Provider>
+    <AuthProvider>
       <html lang="ru">
         {/* <body className={inter.className}>{children}</body> */}
         <body>{children}</body>
       </html>
-    </Provider>
+    </AuthProvider>
   )
 }
 

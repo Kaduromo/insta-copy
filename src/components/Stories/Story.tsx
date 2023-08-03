@@ -12,7 +12,7 @@ const Story = ({
   return (
     <li className="relative group cursor-pointer">
       <img
-        className="h-14 object-cover rounded-full p-[1.5px] border-2 border-red-500 cursor-pointer transition-transform duration-200 ease-out group-hover:scale-110"
+        className="w-14 h-14 rounded-full p-[1.5px] border-2 border-red-500 cursor-pointer transition-transform duration-200 ease-out group-hover:scale-110"
         src={img}
         alt={name}
       />
