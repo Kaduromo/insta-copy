@@ -56,9 +56,7 @@ const Users = ({
                     )}
                     <ul className="flex justify-center items-center gap-3">
                       <li className="text-center">
-                        <h5 className="font-bold">
-                          {user?.image?.length || "0"}
-                        </h5>
+                        <h5 className="font-bold">{posts.length}</h5>
                         <span className="text-gray-400">Публикаций</span>
                       </li>
                       <li className="text-center">

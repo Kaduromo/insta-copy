@@ -19,7 +19,6 @@ const UserPage = ({
   const router = useRouter()
   console.log("UserPage")
 
-  
   const onSignOut = () => {
     signOut(auth)
     setCurrentUser(null)
@@ -75,9 +74,7 @@ const UserPage = ({
                   </button>
                   <ul className="flex justify-center items-center gap-3">
                     <li className="text-center">
-                      <h5 className="font-bold">
-                        {currentUser?.image?.length || "0"}
-                      </h5>
+                      <h5 className="font-bold">{posts.length}</h5>
                       <span className="text-gray-400">Публикаций</span>
                     </li>
                     <li className="text-center">
