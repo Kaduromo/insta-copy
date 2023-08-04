@@ -50,3 +50,15 @@ export interface IFirebaseUser {
   username: string | null
   timestamp: { seconds: number | null; nanoseconds: number | null }
 }
+
+export interface IUsers {
+  id: string
+  data: () => {
+    uid: string
+    name: string
+    image: string
+    email: string
+    username: string
+    timestamp: { seconds: number; nanoseconds: number }
+  }
+}

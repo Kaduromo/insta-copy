@@ -86,6 +86,8 @@ const UploadImagePopup = () => {
         <input
           type="file"
           hidden
+          multiple={true}
+          accept=".png,.jpg,.jpeg,.gif"
           ref={filePickerRef}
           onChange={addImageToPost}
         />

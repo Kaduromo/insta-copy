@@ -1,12 +1,12 @@
 import Head from "next/head"
-import { IFirebaseUser, IPostUser } from "@/types/types"
+import { IFirebaseUser } from "@/types/types"
 
 const Users = ({
   user,
   posts,
 }: {
   user: IFirebaseUser
-  posts: IPostUser[]
+  posts: { id: string; image: string; username: string }[]
 }) => {
   console.log("Users")
 
@@ -79,20 +79,26 @@ const Users = ({
                 <div className="flex items-center justify-between mb-3">
                   <h5 className="font-bold text-lg">Публикации</h5>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {posts
-                    ? posts.map((post: IPostUser) => (
-                        <div
-                          key={post.id}
-                          className="sm:basis-1/3 px-4 mr-[-0.75rem]"
-                        >
-                          <img
-                            src={post.data().image}
-                            alt={post.data().username}
-                            className="rounded border p-1 mr-3 shadow-md shadow-slate-700/50"
-                          />
-                        </div>
-                      ))
+                    ? posts.map(
+                        (post: {
+                          id: string
+                          image: string
+                          username: string
+                        }) => (
+                          <div
+                            key={post.id}
+                            className="sm:basis-1/3 px-4 mr-[-0.75rem] h-[120px] md:h-[240px] lg:h-[310px]"
+                          >
+                            <img
+                              src={post.image}
+                              alt={post.username}
+                              className="rounded border p-1 mr-3 shadow-md shadow-slate-700/50"
+                            />
+                          </div>
+                        )
+                      )
                     : "Здесь пока пусто"}
                 </div>
               </div>

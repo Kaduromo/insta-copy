@@ -4,9 +4,10 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 import { db } from "@/app/firebase"
 import { Users, UserPage } from "@/components/User"
 import { useAuth } from "@/providers/useAuth"
+import { IUsers, IPostUser } from "@/types/types"
 
 const UserName = ({ userName }: { userName: string }) => {
-  // console.log( uid)
+  // console.log(userName)
 
   const userNameLowerCase = userName.replace(/\s+/g, "_").toLowerCase()
   const [posts, setPosts] = useState([])
@@ -19,39 +20,50 @@ const UserName = ({ userName }: { userName: string }) => {
     )
   }, [])
 
-  if (currentUser) {
-    const usersAll = users.map((u: any) => {
-      return {
-        id: u.id,
-        email: u.data().email,
-        image: u.data().image,
-        name: u.data().name,
-        timestamp: u.data().timestamp,
-        uid: u.data().uid,
-        username: u.data().username,
-      }
-    })
+  const usersAll = users.map((u: IUsers) => {
+    return {
+      id: u.id,
+      email: u.data().email,
+      image: u.data().image,
+      name: u.data().name,
+      timestamp: u.data().timestamp,
+      uid: u.data().uid,
+      username: u.data().username,
+    }
+  })
 
-    return (
-      <>
-        {userNameLowerCase ===
-        currentUser?.name.replace(/\s+/g, "_").toLowerCase() ? (
-          <>
-            <UserPage currentUser={currentUser} posts={posts} />
-          </>
-        ) : (
-          <Users
-            user={usersAll.find(
-              (u: any) =>
-                userNameLowerCase ===
-                  u.name.replace(/\s+/g, "_").toLowerCase() && u
-            )}
-            posts={posts}
-          />
-        )}
-      </>
-    )
-  }
+  const allPost = posts.map((p: IPostUser) => {
+    return {
+      id: p.id,
+      image: p.data().image,
+      username: p.data().username,
+    }
+  })
+
+  const filterPost = allPost.filter(
+    (p: { id: string; image: string; username: string }) =>
+      userName === p.username.replace(/\s+/g, "_").toLowerCase() && p
+  )
+
+  return (
+    <>
+      {userNameLowerCase ===
+      currentUser?.name.replace(/\s+/g, "_").toLowerCase() ? (
+        <>
+          <UserPage currentUser={currentUser} posts={filterPost} />
+        </>
+      ) : (
+        <Users
+          user={usersAll.find(
+            (u: any) =>
+              userNameLowerCase === u.name.replace(/\s+/g, "_").toLowerCase() &&
+              u
+          )}
+          posts={filterPost}
+        />
+      )}
+    </>
+  )
 
   return <div>Loading...</div>
 }
