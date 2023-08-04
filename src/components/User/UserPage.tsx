@@ -1,5 +1,8 @@
 import Head from "next/head"
 import { IFirebaseUser } from "@/types/types"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/providers/useAuth"
+import { signOut } from "firebase/auth"
 
 const UserPage = ({
   currentUser,
@@ -12,7 +15,16 @@ const UserPage = ({
     username: string
   }[]
 }) => {
+  const { auth, setCurrentUser } = useAuth()
+  const router = useRouter()
   console.log("UserPage")
+
+  
+  const onSignOut = () => {
+    signOut(auth)
+    setCurrentUser(null)
+    router.push("/")
+  }
 
   return (
     <>
@@ -54,6 +66,12 @@ const UserPage = ({
                     // onClick={() => navigate(`/user/${userId}/:edit`)}
                   >
                     Редактировать профиль
+                  </button>
+                  <button
+                    className="text-white bg-red-500 rounded p-2 hover:bg-red-600 ease-in duration-150"
+                    onClick={() => onSignOut()}
+                  >
+                    Выйти
                   </button>
                   <ul className="flex justify-center items-center gap-3">
                     <li className="text-center">
